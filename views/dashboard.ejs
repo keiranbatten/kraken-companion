@@ -1,14 +1,26 @@
 <%- include('layout.ejs'); %>
 <div class="container">
-    <div class="row justify-content-center">
-
-        <h3>My name is <%= user.name %> </h3> &nbsp;
-        <h3>I stay at <%= user.location %> </h3> <br>
-
+    <div class="d-flex justify-content-center">
+        <h3>Assets</h3>
     </div>
-</div>
-<div>
-    <a href="/logout"> <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Logout</button> </a>
+    <div class="d-flex justify-content-center">
+        <div class="row justify-content-center">
+            <% gain_loss.forEach((asset) => { %>
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= asset.bought_asset %></h5>
+                        <p class="card-text">
+                            Amount: <%= asset.bought_amount %> <br>
+                            Bought for: <%= asset.spent_amount %> <%= asset.spent_asset %> <br>
+                            Current value: <%= asset.current_value %> <%= asset.spent_asset %> <br>
+                            As At: <%= asset.time %> <br>
+                            Gain/Loss: <%= asset.gain_loss %>%
+                        </p>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
 </div>
 
 </body>

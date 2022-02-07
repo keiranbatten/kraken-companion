@@ -1,0 +1,8 @@
+{
+  "name": "retrieveKrakenGainLoss",
+  "version": "1.0.0",
+  "dependencies": {
+    "kraken-api": "^1.0.1",
+    "mongoose": "^6.2.0"
+  }
+}

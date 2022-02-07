@@ -10,9 +10,12 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 </head>
-<body><!-- Just an image -->
+<body>
     <nav class="navbar navbar-light bg-light">
       <a class="navbar-brand" href="#">
         <img src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" alt="">
       </a>
+      <% if (locals.session.loggedin) { %>
+        <a href="/logout"> <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Logout</button> </a>
+      <% } %>
     </nav>
