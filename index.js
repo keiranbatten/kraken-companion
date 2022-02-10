@@ -45,6 +45,10 @@ app.use(passport.session());
 //Routes
 app.use("/", require("./routes/login"));
 
+app.get("/chart.js", function (req, res) {
+  res.sendFile(__dirname + "/node_modules/chart.js/dist/chart.js");
+});
+
 app.listen(PORT, console.log(`Server listening on port ${PORT}`));
 
 // let krakenService = new KrakenService();

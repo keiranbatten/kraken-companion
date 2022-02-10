@@ -43,15 +43,16 @@ class KrakenService {
           spend = spendreceive[1];
           receive = spendreceive[0];
         }
-        let snapshot = await Snapshot.find({ refid: refid })
+        let snapshots = await Snapshot.find({ refid: refid })
           .sort({ as_at: -1 })
-          .limit(1);
-        snapshot = snapshot[0];
+          .limit(60);
+        let snapshot = snapshots[snapshots.length - 1];
         snapshot.as_at = new Date(snapshot.as_at);
         return {
           refid: refid,
           bought_asset: receive.asset,
           bought_amount: receive.amount,
+          bought_date: new Date(receive.time * 1000),
           spent_asset: spend.asset,
           spent_amount: -1 * spend.amount,
           time: `${snapshot.as_at.toLocaleDateString()} ${snapshot.as_at.toLocaleTimeString()}`,
@@ -60,6 +61,7 @@ class KrakenService {
             (snapshot.current_value * 100) / (-1 * spend.amount) -
             100
           ).toFixed(2),
+          snapshots: snapshots.reverse(),
         };
       })
     );

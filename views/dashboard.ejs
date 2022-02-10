@@ -5,8 +5,33 @@
     </div>
     <div class="d-flex justify-content-center">
         <div class="row justify-content-center">
+            <% let ctx, myChart; %>
             <% gain_loss.forEach((asset) => { %>
                 <div class="card" style="width: 18rem;">
+                    <div class="card-image-top">
+                        <canvas id="<%= asset.refid %>" width="400" height="400"></canvas>
+                        <script>
+                            //ctx = document.getElementById("<%= asset.refid %>");
+                            new Chart(document.getElementById("<%= asset.refid %>"), {
+                                type: 'line',
+                                data: {
+                                    labels: <%- JSON.stringify(asset.snapshots.map(n => n.as_at.toLocaleTimeString())) %>,
+                                    datasets: [
+                                        {
+                                            label: "Est price (USD)",
+                                            data: <%- JSON.stringify(asset.snapshots.map(n => n.current_value)) %>,
+                                            backgroundColor: 'rgba(255, 0, 0, 1)',
+                                            borderColor: 'rgba(255, 255, 255, 1)'
+                                        },
+                                        // {
+                                        //     label: "Bought Price",
+                                        //     data: <%- JSON.stringify(Array.from(Array(60).fill(asset.spent_amount))) %>,
+                                        // }
+                                    ]
+                                }
+                            });
+                        </script>
+                    </div>
                     <div class="card-body">
                         <h5 class="card-title"><%= asset.bought_asset %></h5>
                         <p class="card-text">
