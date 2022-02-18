@@ -49,6 +49,10 @@ app.get("/chart.js", function (req, res) {
   res.sendFile(__dirname + "/node_modules/chart.js/dist/chart.js");
 });
 
+app.get("/style.css", function (req, res) {
+  res.sendFile(__dirname + "/styles/style.css");
+});
+
 app.listen(PORT, console.log(`Server listening on port ${PORT}`));
 
 // let krakenService = new KrakenService();

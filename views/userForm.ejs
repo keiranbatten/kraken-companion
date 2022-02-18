@@ -1,31 +1,32 @@
 <%- include('layout.ejs'); %>
-  <div class="container">
+
+<div class="container">
     <div class="row justify-content-center">
       <div class="col-md-8">
-        <div class="row justify-content-center">
-          <h2>Kraken Companion</h2>  
-        </div>
         <div class="card">
-          <div class="card-header">Register</div>
           <div class="card-body">
 
-            <form class="form-horizontal" method="post" action="/register">
+            <% if (!newUser) { %>
+            <form class="form-horizontal" method="post" action="/update-user/<%= editingUser._id %>">
+            <% } else { %>
+            <form class="form-horizontal" method="post" action="/add-user">
+            <% } %>
 
               <div class="form-group">
-                <label for="name" class="cols-sm-2 control-label">Your Name</label>
+                <label for="name" class="cols-sm-2 control-label">Name</label>
                 <div class="cols-sm-10">
                   <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                    <input type="text" class="form-control" name="name" id="name" placeholder="Enter your Name" />
+                    <input type="text" class="form-control" name="name" id="name" value="<%= editingUser.name %>" placeholder="Name" />
                   </div>
                 </div>
               </div>
               <div class="form-group">
-                <label for="email" class="cols-sm-2 control-label">Your Email</label>
+                <label for="email" class="cols-sm-2 control-label">Email</label>
                 <div class="cols-sm-10">
                   <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
-                    <input type="text" class="form-control" name="email" id="email" placeholder="Enter your Email" />
+                    <input type="text" class="form-control" name="email" id="email" value="<%= editingUser.email %>" placeholder="Email" />
                   </div>
                 </div>
               </div>
@@ -36,7 +37,7 @@
                   <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
                     <input type="password" class="form-control" name="password" id="password"
-                      placeholder="Enter your Password" />
+                      placeholder="Password" />
                   </div>
                 </div>
               </div>
@@ -46,15 +47,16 @@
                   <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
                     <input type="password" class="form-control" name="confirm" id="confirm"
-                      placeholder="Confirm your Password" />
+                      placeholder="Confirm Password" />
                   </div>
                 </div>
               </div>
               <div class="form-group ">
-                <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Register</button>
-              </div>
-              <div class="login-register">
-                <a href="/login">Login</a>
+                <% if (!newUser) { %>
+                <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Update User</button>
+                <% } else { %>
+                <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Add User</button>
+                <% } %>
               </div>
             </form>
           </div>

@@ -1,0 +1,52 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  line-height: 1;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+[data-initials]:before {
+  background: #099bdd;
+  color: white;
+  opacity: 1;
+  content: attr(data-initials);
+  display: inline-block;
+  font-weight: bold;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 0.5em;
+  width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+.asset-detail-graph-container {
+  width: 100%;
+  height: 200px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.stats-col {
+  padding: 0 !important;
+}

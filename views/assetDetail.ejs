@@ -1,0 +1,148 @@
+<%- include('layout.ejs'); %>
+<div class="container">
+    <div class="d-flex justify-content-between">
+        <a href="/dashboard"><i class="fs-4 bi-arrow-left"></i></a>
+        <h3><%= asset.bought_asset %> <span id="current-value-header"><%= current_value %></span> <%= asset.spent_asset %></h3>
+        <div></div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12 col-md-6">
+            <canvas id="graph" width="350" height="200"></canvas>
+            <div class="d-flex w-100 timespan-row">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-secondary active">
+                        <input type="radio" name="options" id="1h" autocomplete="off" checked onclick="changePeriod('1h')"> 1h
+                    </label>
+                    <label class="btn btn-secondary active">
+                        <input type="radio" name="options" id="24h" autocomplete="off" onclick="changePeriod('24h')"> 24h
+                    </label>
+                    <label class="btn btn-secondary active">
+                        <input type="radio" name="options" id="7d" autocomplete="off" onclick="changePeriod('7d')"> 7d
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="d-flex w-100 stats-row">
+                <div class="col-sm-6 stats-col">
+                    <span class="bold">Est. Value: </span>
+                    <span id="asset-stats-current-value"><%= current_value %></span>
+                </div>
+                <div class="col-sm-6 stats-col">
+                    <span class="bold">As At: </span>
+                    <span id="asset-stats-as-at"><%= as_at.toLocaleDateString('en-NZ', date_options) %></span>
+                </div>
+            </div>
+            <div class="d-flex w-100 stats-row">
+                <div class="col-sm-6 stats-col">
+                    <span class="bold">Bought For: </span>
+                    <span id="asset-stats-bought-for"><%= asset.spent_amount %> <%= asset.spent_asset %></span>
+                </div>
+                <div class="col-sm-6 stats-col">
+                    <span class="bold">Date: </span>
+                    <span id="asset-stats-bought-date"><%= asset.bought_date.toLocaleDateString('en-NZ', date_options) %></span>
+                </div>
+            </div>
+            <div class="d-flex w-100 stats-row">
+                <div class="col-sm-6 stats-col">
+                    <span class="bold">Est Gain/Loss: </span>
+                    <span id="asset-stats-gain-loss"><%= gain_loss %></span>%
+                </div>
+                <!-- <div class="col-sm-6">
+                    <span class="bold">As At: </span>
+                    <span id="asset-stats-as-at"></span>
+                </div> -->
+            </div>
+            <div class="d-flex w-100 stats-row">
+                <div class="col-sm-6 stats-col">
+                    <span class="bold">Period Min: </span>
+                    <span id="asset-stats-period-min"><%= period_min %> <%= asset.spent_asset %></span>
+                </div>
+                <div class="col-sm-6 stats-col">
+                    <span class="bold">Period Max: </span>
+                    <span id="asset-stats-period-max"><%= period_max %> <%= asset.spent_asset %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    let period = '1h';
+    let date_options = <%- JSON.stringify(date_options) %>;
+    let interval;
+
+    // initialise chart
+    new Chart(document.getElementById("graph"), {
+        type: 'line',
+        data: {
+            labels: <%- JSON.stringify(snapshots.map(n => n.as_at.toLocaleTimeString())) %>,
+            datasets: [
+                {
+                    label: "Est price (USD)",
+                    data: <%- JSON.stringify(snapshots.map(n => n.current_value)) %>,
+                    backgroundColor: 'rgba(148, 0, 211, 1)',
+                    borderColor: 'rgba(148, 0, 211, 1)',
+                    pointRadius: 0
+                },
+            ]
+        },
+        options: {
+            scales: {
+                xAxis: {
+                    display: false
+                },
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    function retrieveData() {
+        let refid = '<%= asset.refid %>';
+        fetch(`/snapshots/${refid}?timespan=${period}`, {method: 'GET', mode: 'same-origin', cache: 'no-cache', credentials: 'same-origin', headers: {'Content-Type': 'application/json'}}).then(res => {
+            // let snapshots = res;
+            return res.json();
+        }).then(function(data) {
+            let snapshots = data;
+            let chart = Chart.getChart("graph");
+            chart.data.datasets[0].data = snapshots.map(n => n.current_value);
+            chart.data.labels = snapshots.map(n => {let d = new Date(n.as_at); return `${d.toLocaleDateString('en-NZ', date_options)}`})
+            chart.update();
+
+            let period_min = Math.min(...snapshots.map(n => n.current_value)).toFixed(2);
+            let period_max = Math.max(...snapshots.map(n => n.current_value)).toFixed(2);
+            let current_min = document.getElementById("asset-stats-period-min").innerHTML;
+            let currency = current_min.split(' ')[1];
+            document.getElementById("asset-stats-period-min").innerHTML = `${period_min} ${currency}`;
+            document.getElementById("asset-stats-period-max").innerHTML = `${period_max} ${currency}`;
+            let current_snapshot = snapshots[snapshots.length - 1];
+            document.getElementById("current-value-header").innerHTML = current_snapshot.current_value.toFixed(2);
+            document.getElementById("asset-stats-current-value").innerHTML = current_snapshot.current_value.toFixed(2);
+            document.getElementById("asset-stats-as-at").innerHTML = new Date(current_snapshot.as_at).toLocaleDateString('en-NZ', date_options);
+        });
+    }
+
+    function changePeriod(period_value) {
+        if (period_value == period) {
+            return;
+        }
+        clearInterval(interval);
+        period = period_value;
+        retrieveData();
+        interval = setInterval(() => {
+            retrieveData();
+        }, 60000);
+    }
+
+    interval = setInterval(() => {
+        retrieveData();
+    }, 60000);
+</script>
+
+</body>
+</html>
